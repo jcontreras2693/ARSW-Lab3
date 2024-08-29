@@ -34,6 +34,10 @@ Teniendo en cuenta los conceptos vistos de condición de carrera y sincronizaci�
 - La búsqueda distribuida se detenga (deje de buscar en las listas negras restantes) y retorne la respuesta apenas, en su conjunto, los hilos hayan detectado el número de ocurrencias requerido que determina si un host es confiable o no (_BLACK_LIST_ALARM_COUNT_).
 - Lo anterior, garantizando que no se den condiciones de carrera.
 
+    - Al usar 8 hilos se evidencia que el programa solo ha buscado en 8.000 de 80.000 listas negras para cuándo descubre que la IP no es confiable.
+
+![](./img/media/parte2.png)
+
 ##### Parte III. – Avance para el martes, antes de clase.
 
 Sincronización y Dead-Locks.

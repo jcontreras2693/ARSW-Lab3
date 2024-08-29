@@ -1,7 +1,7 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import java.util.ArrayList;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
 
 public class BlackListThread extends Thread{
@@ -9,14 +9,16 @@ public class BlackListThread extends Thread{
     private int intB;
     private String IP;
     private ArrayList<Integer> blackListOcurrences;
-    private int checkedListsCount;
+    private AtomicInteger checkedListsCount;
+    private int alarmCount;
 
-    public BlackListThread(int intA, int intB, String IP){
+    public BlackListThread(int intA, int intB, String IP, ArrayList<Integer> blackListOcurrences, AtomicInteger checkedListsCount, int alarmCount){
         this.intA = intA;
         this.intB = intB;
         this.IP = IP;
-        this.blackListOcurrences = new ArrayList<Integer>();
-        this.checkedListsCount = 0;
+        this.blackListOcurrences = blackListOcurrences;
+        this.checkedListsCount = checkedListsCount;
+        this.alarmCount = alarmCount;
     }
 
     @Override
@@ -27,25 +29,15 @@ public class BlackListThread extends Thread{
     public void blackListFind(){
         HostBlacklistsDataSourceFacade skds = HostBlacklistsDataSourceFacade.getInstance();
         for (int i = intA; i <= intB; i++){
+            if (skds.isInBlackListServer(i, IP)){
+                blackListOcurrences.add(i);
+            }
             synchronized (blackListOcurrences){
                 if (blackListOcurrences.size() >= 5){
                     break;
                 }
-            }
-            checkedListsCount++;
-            if (skds.isInBlackListServer(i, IP)){
-                blackListOcurrences.add(i);
+            checkedListsCount.incrementAndGet();
             }
         }
-
     }
-
-    public ArrayList<Integer> getBlackListOcurrences(){
-        return blackListOcurrences;
-    }
-
-    public int getCheckedListsCount(){
-        return checkedListsCount;
-    }
-
 }
