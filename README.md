@@ -89,14 +89,14 @@ Sincronización y Dead-Locks.
 
 9. Una vez corregido el problema, rectifique que el programa siga funcionando de manera consistente cuando se ejecutan 100, 1000 o 10000 inmortales. Si en estos casos grandes se empieza a incumplir de nuevo el invariante, debe analizar lo realizado en el paso 4.
 
-- El invariante no se incumple incluso en los casos donde hay 10000 inmortales.
+- El invariante se cumple incluso en los casos donde hay 1000 inmortales.
 
 ![](./img/media/parte3.9.png)
 
 10. Un elemento molesto para la simulación es que en cierto punto de la misma hay pocos 'inmortales' vivos realizando peleas fallidas con 'inmortales' ya muertos. Es necesario ir suprimiendo los inmortales muertos de la simulación a medida que van muriendo. Para esto:
 	* Analizando el esquema de funcionamiento de la simulación, esto podría crear una condición de carrera? Implemente la funcionalidad, ejecute la simulación y observe qué problema se presenta cuando hay muchos 'inmortales' en la misma. Escriba sus conclusiones al respecto en el archivo RESPUESTAS.txt.
 
-        * El problema se genera cuando se intenta eliminar un inmortal de la lista mientras otro procesa está iterando sobre ella. Esto no sucede mientras se tengan pocos inmortales.
+        * El problema se genera cuando se intenta eliminar un inmortal de la lista mientras otro procesa está iterando sobre ella. Esto no sucede mientras se tengan pocos inmortales. Se solucionó usando la clase CopyOnWriteArrayList().
 
 ![](./img/media/parte3.10.png)
       

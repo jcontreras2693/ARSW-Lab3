@@ -22,6 +22,7 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.JScrollBar;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ControlFrame extends JFrame {
 
@@ -30,7 +31,8 @@ public class ControlFrame extends JFrame {
 
     private JPanel contentPane;
 
-    private List<Immortal> immortals;
+    private CopyOnWriteArrayList<Immortal> immortals;
+    private AtomicInteger healthTotal = new AtomicInteger();
 
     private JTextArea output;
     private JLabel statisticsLabel;
@@ -90,15 +92,12 @@ public class ControlFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 if (immortals != null && !immortals.isEmpty()) {
-                    int sum = 0;
+                    healthTotal.set(0);
                     for (Immortal im : immortals) {
                         im.pause();
                     }
-                    for (Immortal im : immortals) {
-                        sum += im.getHealth();
-                    }
 
-                    statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
+                    statisticsLabel.setText("<html>"+immortals.toString()+"<br>Inmortals playing: "+ Integer.toString(immortals.size()) + "<br>Health sum: "+ healthTotal.get());
                 }
             }
         });
@@ -121,7 +120,7 @@ public class ControlFrame extends JFrame {
         toolBar.add(lblNumOfImmortals);
 
         numOfImmortals = new JTextField();
-        numOfImmortals.setText("100");
+        numOfImmortals.setText("1000");
         toolBar.add(numOfImmortals);
         numOfImmortals.setColumns(10);
 
@@ -152,7 +151,7 @@ public class ControlFrame extends JFrame {
 
     }
 
-    public List<Immortal> setupInmortals() {
+    public CopyOnWriteArrayList<Immortal> setupInmortals() {
 
         ImmortalUpdateReportCallback ucb=new TextAreaUpdateReportCallback(output,scrollPane);
         Object lock = new Object();
@@ -160,10 +159,11 @@ public class ControlFrame extends JFrame {
         try {
             int ni = Integer.parseInt(numOfImmortals.getText());
 
-            List<Immortal> il = new LinkedList<Immortal>();
+            CopyOnWriteArrayList<Immortal> il = new CopyOnWriteArrayList<Immortal>();
+            healthTotal.set(0);
 
             for (int i = 0; i < ni; i++) {
-                Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE, ucb, lock);
+                Immortal i1 = new Immortal("im" + i, il, DEFAULT_IMMORTAL_HEALTH, DEFAULT_DAMAGE_VALUE, ucb, lock, healthTotal);
                 il.add(i1);
             }
             return il;
